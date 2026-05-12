@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registro de Conductores</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Volquetas</title>
 
   <style>
+
     *{
       margin:0;
       padding:0;
       box-sizing:border-box;
-      font-family: Arial, sans-serif;
+      font-family:Arial, sans-serif;
     }
 
     body{
-      background:#f4f6f9;
+      background:#f1f5f9;
       padding:15px;
-      color:#1f2937;
     }
 
     .container{
-      max-width:700px;
+      max-width:750px;
       margin:auto;
       background:white;
-      border-radius:18px;
+      border-radius:20px;
       overflow:hidden;
-      box-shadow:0 5px 20px rgba(0,0,0,.08);
+      box-shadow:0 5px 20px rgba(0,0,0,0.1);
     }
 
     .header{
-      background:#153b6d;
+      background:#0f172a;
       color:white;
-      padding:25px 20px;
+      padding:25px;
     }
 
     .header h1{
@@ -40,7 +40,7 @@
     }
 
     .header p{
-      opacity:.8;
+      opacity:0.8;
     }
 
     .content{
@@ -48,12 +48,12 @@
     }
 
     .section-title{
-      margin:25px 0 15px;
       font-size:18px;
-      color:#1d4f91;
-      border-bottom:2px solid #e5e7eb;
-      padding-bottom:8px;
       font-weight:bold;
+      color:#1e3a8a;
+      margin:25px 0 15px;
+      border-bottom:2px solid #e2e8f0;
+      padding-bottom:8px;
     }
 
     .grid{
@@ -82,15 +82,15 @@
     textarea,
     select{
       width:100%;
-      padding:15px;
+      padding:14px;
       border:1px solid #cbd5e1;
       border-radius:12px;
       font-size:16px;
-      outline:none;
+      background:white;
     }
 
     textarea{
-      min-height:120px;
+      min-height:100px;
       resize:vertical;
     }
 
@@ -102,11 +102,12 @@
 
     .option-btn{
       border:1px solid #94a3b8;
-      border-radius:30px;
       padding:12px 18px;
+      border-radius:30px;
       cursor:pointer;
+      transition:0.2s;
+      user-select:none;
       background:white;
-      transition:.2s;
     }
 
     .option-btn input{
@@ -128,7 +129,7 @@
 
     .measurement-box input[type="radio"]{
       width:auto;
-      margin-right:10px;
+      margin-right:8px;
     }
 
     .hidden{
@@ -145,7 +146,7 @@
       font-size:18px;
       font-weight:bold;
       cursor:pointer;
-      margin-top:15px;
+      margin-top:20px;
     }
 
     .btn-submit:hover{
@@ -161,11 +162,17 @@
       display:none;
     }
 
-    .loading{
-      opacity:.7;
-      pointer-events:none;
+    .error{
+      background:#fee2e2;
+      color:#991b1b;
+      padding:15px;
+      border-radius:12px;
+      margin-bottom:15px;
+      display:none;
     }
+
   </style>
+
 </head>
 
 <body>
@@ -173,25 +180,37 @@
 <div class="container">
 
   <div class="header">
-    <h1>Registro de Conductor</h1>
-    <p>Volquetas — Ingreso de vale</p>
+    <h1>Registro de Volquetas</h1>
+    <p>Control operativo de conductores</p>
   </div>
 
   <div class="content">
 
     <div class="success" id="successMsg">
-      Registro enviado correctamente
+      Registro enviado correctamente.
+    </div>
+
+    <div class="error" id="errorMsg">
+      Error enviando datos.
     </div>
 
     <form id="registroForm">
 
-      <div class="section-title">DATOS DEL VALE</div>
+      <div class="section-title">
+        Datos Generales
+      </div>
 
       <div class="grid">
 
         <div class="field">
-          <label>Placa del vehículo</label>
-          <input type="text" name="placa" required>
+          <label>Placa</label>
+
+          <select name="placa" required>
+            <option value="">Seleccione una placa</option>
+            <option value="USE-259">USE-259</option>
+            <option value="STS-405">STS-405</option>
+          </select>
+
         </div>
 
         <div class="field">
@@ -202,40 +221,37 @@
       </div>
 
       <div class="field">
-        <label>Número de vale</label>
+        <label>Número de Vale</label>
         <input type="text" name="numeroVale" required>
       </div>
 
-      <div class="field">
-        <label>Foto del vale</label>
-        <input type="file" name="fotoVale">
+      <div class="section-title">
+        Actividad
       </div>
 
-      <div class="section-title">ACTIVIDAD</div>
+      <div class="options">
 
-      <div class="options" id="activityOptions">
-
-        <label class="option-btn">
+        <label class="option-btn actividad-btn">
           <input type="radio" name="actividad" value="Cargue" required>
           Cargue
         </label>
 
-        <label class="option-btn">
+        <label class="option-btn actividad-btn">
           <input type="radio" name="actividad" value="Mantenimiento">
           Mantenimiento
         </label>
 
-        <label class="option-btn">
+        <label class="option-btn actividad-btn">
           <input type="radio" name="actividad" value="Stand By">
           Stand By
         </label>
 
-        <label class="option-btn">
+        <label class="option-btn actividad-btn">
           <input type="radio" name="actividad" value="Varada">
           Varada
         </label>
 
-        <label class="option-btn">
+        <label class="option-btn actividad-btn">
           <input type="radio" name="actividad" value="Otro">
           Otro
         </label>
@@ -243,10 +259,11 @@
       </div>
 
       <div class="section-title">
-        TIPO DE MEDICIÓN
+        Tipo de Medición
       </div>
 
       <div class="measurement-box">
+
         <label>
           <input type="radio" name="tipoMedicion" value="Cantidad m3">
           Cantidad m³
@@ -255,54 +272,88 @@
         <div id="cantidadBox" class="hidden">
           <input type="number" step="0.01" name="cantidadM3" placeholder="Ingrese cantidad m³">
         </div>
+
       </div>
 
       <div class="measurement-box">
+
         <label>
           <input type="radio" name="tipoMedicion" value="Kilometraje">
-          Kilometraje inicial / final
+          Kilometraje Inicial / Final
         </label>
 
         <div id="kmBox" class="hidden">
 
           <div class="grid">
 
-            <input type="number" name="kmInicial" placeholder="KM inicial">
+            <input type="number" name="kmInicial" placeholder="KM Inicial">
 
-            <input type="number" name="kmFinal" placeholder="KM final">
+            <input type="number" name="kmFinal" placeholder="KM Final">
 
           </div>
 
         </div>
+
       </div>
 
       <div class="measurement-box">
+
         <label>
           <input type="radio" name="tipoMedicion" value="Otro">
           Otro
         </label>
 
         <div id="otroBox" class="hidden">
-          <input type="text" name="otroMedicion" placeholder="Descripción">
+          <input type="text" name="otroMedicion" placeholder="Escriba la medición">
         </div>
+
       </div>
 
       <div class="section-title">
-        MATERIAL Y OBSERVACIONES
+        Tipo de Material
       </div>
 
-      <div class="field">
-        <label>Tipo de material</label>
-        <input type="text" name="material">
+      <div class="options">
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Recebo">
+          Recebo
+        </label>
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Triturado">
+          Triturado
+        </label>
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Arena">
+          Arena
+        </label>
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Tierra">
+          Tierra
+        </label>
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Escombros">
+          Escombros
+        </label>
+
+        <label class="option-btn material-btn">
+          <input type="checkbox" value="Otro">
+          Otro
+        </label>
+
       </div>
 
-      <div class="field">
+      <div class="field" style="margin-top:15px;">
         <label>Observaciones</label>
         <textarea name="observaciones"></textarea>
       </div>
 
       <button type="submit" class="btn-submit">
-        Enviar registro
+        Enviar Registro
       </button>
 
     </form>
@@ -313,15 +364,27 @@
 
 <script>
 
-  const optionButtons = document.querySelectorAll(".option-btn");
+  const actividadButtons = document.querySelectorAll(".actividad-btn");
 
-  optionButtons.forEach(btn => {
+  actividadButtons.forEach(btn => {
 
     btn.addEventListener("click", () => {
 
-      optionButtons.forEach(b => b.classList.remove("active"));
+      actividadButtons.forEach(b => b.classList.remove("active"));
 
       btn.classList.add("active");
+
+    });
+
+  });
+
+  const materialButtons = document.querySelectorAll(".material-btn");
+
+  materialButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      btn.classList.toggle("active");
 
     });
 
@@ -363,12 +426,23 @@
 
     e.preventDefault();
 
+    document.getElementById("successMsg").style.display = "none";
+    document.getElementById("errorMsg").style.display = "none";
+
     const button = document.querySelector(".btn-submit");
 
     button.innerText = "Enviando...";
-    button.classList.add("loading");
+    button.disabled = true;
+
+    const materialesSeleccionados = [];
+
+    document.querySelectorAll('.material-btn input[type="checkbox"]:checked')
+      .forEach(item => {
+        materialesSeleccionados.push(item.value);
+      });
 
     const data = {
+
       placa: form.placa.value,
       fecha: form.fecha.value,
       numeroVale: form.numeroVale.value,
@@ -378,15 +452,22 @@
       kmInicial: form.kmInicial.value,
       kmFinal: form.kmFinal.value,
       otroMedicion: form.otroMedicion.value,
-      material: form.material.value,
+      materiales: materialesSeleccionados.join(", "),
       observaciones: form.observaciones.value
+
     };
 
-    try{
+    try {
 
       await fetch("https://script.google.com/macros/s/AKfycbzV64TtCkDVuzXxlEgekLK8zgytFt36UeZ4UI0EP9hoPLnDnRtpFbUPK1zs-C0tcuzS/exec", {
 
-        method:"POST",
+        method: "POST",
+
+        mode: "no-cors",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
 
         body: JSON.stringify(data)
 
@@ -396,20 +477,23 @@
 
       form.reset();
 
-      optionButtons.forEach(b => b.classList.remove("active"));
+      actividadButtons.forEach(b => b.classList.remove("active"));
+      materialButtons.forEach(b => b.classList.remove("active"));
 
       cantidadBox.classList.add("hidden");
       kmBox.classList.add("hidden");
       otroBox.classList.add("hidden");
 
-    }catch(error){
+    } catch(error){
 
-      alert("Error enviando datos");
+      document.getElementById("errorMsg").style.display = "block";
+
+      console.error(error);
 
     }
 
-    button.innerText = "Enviar registro";
-    button.classList.remove("loading");
+    button.innerText = "Enviar Registro";
+    button.disabled = false;
 
   });
 
