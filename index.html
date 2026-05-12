@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Conductores</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f6f9;
+      padding:15px;
+      color:#1f2937;
+    }
+
+    .container{
+      max-width:700px;
+      margin:auto;
+      background:white;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 5px 20px rgba(0,0,0,.08);
+    }
+
+    .header{
+      background:#153b6d;
+      color:white;
+      padding:25px 20px;
+    }
+
+    .header h1{
+      font-size:28px;
+      margin-bottom:5px;
+    }
+
+    .header p{
+      opacity:.8;
+    }
+
+    .content{
+      padding:20px;
+    }
+
+    .section-title{
+      margin:25px 0 15px;
+      font-size:18px;
+      color:#1d4f91;
+      border-bottom:2px solid #e5e7eb;
+      padding-bottom:8px;
+      font-weight:bold;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    @media(max-width:600px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .field{
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:600;
+    }
+
+    input,
+    textarea,
+    select{
+      width:100%;
+      padding:15px;
+      border:1px solid #cbd5e1;
+      border-radius:12px;
+      font-size:16px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
+    }
+
+    .options{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .option-btn{
+      border:1px solid #94a3b8;
+      border-radius:30px;
+      padding:12px 18px;
+      cursor:pointer;
+      background:white;
+      transition:.2s;
+    }
+
+    .option-btn input{
+      display:none;
+    }
+
+    .option-btn.active{
+      background:#2563eb;
+      color:white;
+      border-color:#2563eb;
+    }
+
+    .measurement-box{
+      border:1px solid #cbd5e1;
+      border-radius:15px;
+      padding:15px;
+      margin-bottom:12px;
+    }
+
+    .measurement-box input[type="radio"]{
+      width:auto;
+      margin-right:10px;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    .btn-submit{
+      width:100%;
+      background:#2563eb;
+      color:white;
+      border:none;
+      padding:18px;
+      border-radius:14px;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:15px;
+    }
+
+    .btn-submit:hover{
+      background:#1d4ed8;
+    }
+
+    .success{
+      background:#dcfce7;
+      color:#166534;
+      padding:15px;
+      border-radius:12px;
+      margin-bottom:15px;
+      display:none;
+    }
+
+    .loading{
+      opacity:.7;
+      pointer-events:none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>Registro de Conductor</h1>
+    <p>Volquetas — Ingreso de vale</p>
+  </div>
+
+  <div class="content">
+
+    <div class="success" id="successMsg">
+      Registro enviado correctamente
+    </div>
+
+    <form id="registroForm">
+
+      <div class="section-title">DATOS DEL VALE</div>
+
+      <div class="grid">
+
+        <div class="field">
+          <label>Placa del vehículo</label>
+          <input type="text" name="placa" required>
+        </div>
+
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" name="fecha" required>
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label>Número de vale</label>
+        <input type="text" name="numeroVale" required>
+      </div>
+
+      <div class="field">
+        <label>Foto del vale</label>
+        <input type="file" name="fotoVale">
+      </div>
+
+      <div class="section-title">ACTIVIDAD</div>
+
+      <div class="options" id="activityOptions">
+
+        <label class="option-btn">
+          <input type="radio" name="actividad" value="Cargue" required>
+          Cargue
+        </label>
+
+        <label class="option-btn">
+          <input type="radio" name="actividad" value="Mantenimiento">
+          Mantenimiento
+        </label>
+
+        <label class="option-btn">
+          <input type="radio" name="actividad" value="Stand By">
+          Stand By
+        </label>
+
+        <label class="option-btn">
+          <input type="radio" name="actividad" value="Varada">
+          Varada
+        </label>
+
+        <label class="option-btn">
+          <input type="radio" name="actividad" value="Otro">
+          Otro
+        </label>
+
+      </div>
+
+      <div class="section-title">
+        TIPO DE MEDICIÓN
+      </div>
+
+      <div class="measurement-box">
+        <label>
+          <input type="radio" name="tipoMedicion" value="Cantidad m3">
+          Cantidad m³
+        </label>
+
+        <div id="cantidadBox" class="hidden">
+          <input type="number" step="0.01" name="cantidadM3" placeholder="Ingrese cantidad m³">
+        </div>
+      </div>
+
+      <div class="measurement-box">
+        <label>
+          <input type="radio" name="tipoMedicion" value="Kilometraje">
+          Kilometraje inicial / final
+        </label>
+
+        <div id="kmBox" class="hidden">
+
+          <div class="grid">
+
+            <input type="number" name="kmInicial" placeholder="KM inicial">
+
+            <input type="number" name="kmFinal" placeholder="KM final">
+
+          </div>
+
+        </div>
+      </div>
+
+      <div class="measurement-box">
+        <label>
+          <input type="radio" name="tipoMedicion" value="Otro">
+          Otro
+        </label>
+
+        <div id="otroBox" class="hidden">
+          <input type="text" name="otroMedicion" placeholder="Descripción">
+        </div>
+      </div>
+
+      <div class="section-title">
+        MATERIAL Y OBSERVACIONES
+      </div>
+
+      <div class="field">
+        <label>Tipo de material</label>
+        <input type="text" name="material">
+      </div>
+
+      <div class="field">
+        <label>Observaciones</label>
+        <textarea name="observaciones"></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        Enviar registro
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+
+  const optionButtons = document.querySelectorAll(".option-btn");
+
+  optionButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      optionButtons.forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+    });
+
+  });
+
+  const radios = document.querySelectorAll('input[name="tipoMedicion"]');
+
+  const cantidadBox = document.getElementById("cantidadBox");
+  const kmBox = document.getElementById("kmBox");
+  const otroBox = document.getElementById("otroBox");
+
+  radios.forEach(radio => {
+
+    radio.addEventListener("change", () => {
+
+      cantidadBox.classList.add("hidden");
+      kmBox.classList.add("hidden");
+      otroBox.classList.add("hidden");
+
+      if(radio.value === "Cantidad m3"){
+        cantidadBox.classList.remove("hidden");
+      }
+
+      if(radio.value === "Kilometraje"){
+        kmBox.classList.remove("hidden");
+      }
+
+      if(radio.value === "Otro"){
+        otroBox.classList.remove("hidden");
+      }
+
+    });
+
+  });
+
+  const form = document.getElementById("registroForm");
+
+  form.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const button = document.querySelector(".btn-submit");
+
+    button.innerText = "Enviando...";
+    button.classList.add("loading");
+
+    const data = {
+      placa: form.placa.value,
+      fecha: form.fecha.value,
+      numeroVale: form.numeroVale.value,
+      actividad: form.actividad.value,
+      tipoMedicion: form.tipoMedicion.value,
+      cantidadM3: form.cantidadM3.value,
+      kmInicial: form.kmInicial.value,
+      kmFinal: form.kmFinal.value,
+      otroMedicion: form.otroMedicion.value,
+      material: form.material.value,
+      observaciones: form.observaciones.value
+    };
+
+    try{
+
+      await fetch("PEGAR_AQUI_TU_URL_DE_GOOGLE_SCRIPT", {
+
+        method:"POST",
+
+        body: JSON.stringify(data)
+
+      });
+
+      document.getElementById("successMsg").style.display = "block";
+
+      form.reset();
+
+      optionButtons.forEach(b => b.classList.remove("active"));
+
+      cantidadBox.classList.add("hidden");
+      kmBox.classList.add("hidden");
+      otroBox.classList.add("hidden");
+
+    }catch(error){
+
+      alert("Error enviando datos");
+
+    }
+
+    button.innerText = "Enviar registro";
+    button.classList.remove("loading");
+
+  });
+
+</script>
+
+</body>
+</html>
