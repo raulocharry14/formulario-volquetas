@@ -39,10 +39,6 @@
       margin-bottom:5px;
     }
 
-    .header p{
-      opacity:0.8;
-    }
-
     .content{
       padding:20px;
     }
@@ -127,11 +123,6 @@
       margin-bottom:12px;
     }
 
-    .measurement-box input[type="radio"]{
-      width:auto;
-      margin-right:8px;
-    }
-
     .hidden{
       display:none;
     }
@@ -149,22 +140,9 @@
       margin-top:20px;
     }
 
-    .btn-submit:hover{
-      background:#1d4ed8;
-    }
-
     .success{
       background:#dcfce7;
       color:#166534;
-      padding:15px;
-      border-radius:12px;
-      margin-bottom:15px;
-      display:none;
-    }
-
-    .error{
-      background:#fee2e2;
-      color:#991b1b;
       padding:15px;
       border-radius:12px;
       margin-bottom:15px;
@@ -181,17 +159,12 @@
 
   <div class="header">
     <h1>Registro de Volquetas</h1>
-    <p>Control operativo de conductores</p>
   </div>
 
   <div class="content">
 
     <div class="success" id="successMsg">
       Registro enviado correctamente.
-    </div>
-
-    <div class="error" id="errorMsg">
-      Error enviando datos.
     </div>
 
     <form id="registroForm">
@@ -225,6 +198,11 @@
         <input type="text" name="numeroVale" required>
       </div>
 
+      <div class="field">
+        <label>Foto del Vale</label>
+        <input type="file" name="fotoVale" accept="image/*">
+      </div>
+
       <div class="section-title">
         Actividad
       </div>
@@ -251,11 +229,6 @@
           Varada
         </label>
 
-        <label class="option-btn actividad-btn">
-          <input type="radio" name="actividad" value="Otro">
-          Otro
-        </label>
-
       </div>
 
       <div class="section-title">
@@ -265,7 +238,7 @@
       <div class="measurement-box">
 
         <label>
-          <input type="radio" name="tipoMedicion" value="Cantidad m3">
+          <input type="checkbox" id="checkCantidad">
           Cantidad m³
         </label>
 
@@ -278,7 +251,7 @@
       <div class="measurement-box">
 
         <label>
-          <input type="radio" name="tipoMedicion" value="Kilometraje">
+          <input type="checkbox" id="checkKm">
           Kilometraje Inicial / Final
         </label>
 
@@ -299,7 +272,7 @@
       <div class="measurement-box">
 
         <label>
-          <input type="radio" name="tipoMedicion" value="Otro">
+          <input type="checkbox" id="checkOtro">
           Otro
         </label>
 
@@ -313,41 +286,11 @@
         Tipo de Material
       </div>
 
-      <div class="options">
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Recebo">
-          Recebo
-        </label>
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Triturado">
-          Triturado
-        </label>
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Arena">
-          Arena
-        </label>
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Tierra">
-          Tierra
-        </label>
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Escombros">
-          Escombros
-        </label>
-
-        <label class="option-btn material-btn">
-          <input type="checkbox" value="Otro">
-          Otro
-        </label>
-
+      <div class="field">
+        <input type="text" name="material" placeholder="Escriba el tipo de material">
       </div>
 
-      <div class="field" style="margin-top:15px;">
+      <div class="field">
         <label>Observaciones</label>
         <textarea name="observaciones"></textarea>
       </div>
@@ -378,46 +321,24 @@
 
   });
 
-  const materialButtons = document.querySelectorAll(".material-btn");
-
-  materialButtons.forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-      btn.classList.toggle("active");
-
-    });
-
-  });
-
-  const radios = document.querySelectorAll('input[name="tipoMedicion"]');
+  const checkCantidad = document.getElementById("checkCantidad");
+  const checkKm = document.getElementById("checkKm");
+  const checkOtro = document.getElementById("checkOtro");
 
   const cantidadBox = document.getElementById("cantidadBox");
   const kmBox = document.getElementById("kmBox");
   const otroBox = document.getElementById("otroBox");
 
-  radios.forEach(radio => {
+  checkCantidad.addEventListener("change", () => {
+    cantidadBox.classList.toggle("hidden");
+  });
 
-    radio.addEventListener("change", () => {
+  checkKm.addEventListener("change", () => {
+    kmBox.classList.toggle("hidden");
+  });
 
-      cantidadBox.classList.add("hidden");
-      kmBox.classList.add("hidden");
-      otroBox.classList.add("hidden");
-
-      if(radio.value === "Cantidad m3"){
-        cantidadBox.classList.remove("hidden");
-      }
-
-      if(radio.value === "Kilometraje"){
-        kmBox.classList.remove("hidden");
-      }
-
-      if(radio.value === "Otro"){
-        otroBox.classList.remove("hidden");
-      }
-
-    });
-
+  checkOtro.addEventListener("change", () => {
+    otroBox.classList.toggle("hidden");
   });
 
   const form = document.getElementById("registroForm");
@@ -426,20 +347,20 @@
 
     e.preventDefault();
 
-    document.getElementById("successMsg").style.display = "none";
-    document.getElementById("errorMsg").style.display = "none";
-
     const button = document.querySelector(".btn-submit");
 
     button.innerText = "Enviando...";
     button.disabled = true;
 
-    const materialesSeleccionados = [];
+    const foto = form.fotoVale.files[0];
 
-    document.querySelectorAll('.material-btn input[type="checkbox"]:checked')
-      .forEach(item => {
-        materialesSeleccionados.push(item.value);
-      });
+    let base64 = "";
+
+    if(foto){
+
+      base64 = await convertirBase64(foto);
+
+    }
 
     const data = {
 
@@ -447,13 +368,14 @@
       fecha: form.fecha.value,
       numeroVale: form.numeroVale.value,
       actividad: form.actividad.value,
-      tipoMedicion: form.tipoMedicion.value,
       cantidadM3: form.cantidadM3.value,
       kmInicial: form.kmInicial.value,
       kmFinal: form.kmFinal.value,
       otroMedicion: form.otroMedicion.value,
-      materiales: materialesSeleccionados.join(", "),
-      observaciones: form.observaciones.value
+      material: form.material.value,
+      observaciones: form.observaciones.value,
+      foto: base64,
+      nombreFoto: foto ? foto.name : ""
 
     };
 
@@ -478,7 +400,6 @@
       form.reset();
 
       actividadButtons.forEach(b => b.classList.remove("active"));
-      materialButtons.forEach(b => b.classList.remove("active"));
 
       cantidadBox.classList.add("hidden");
       kmBox.classList.add("hidden");
@@ -486,9 +407,7 @@
 
     } catch(error){
 
-      document.getElementById("errorMsg").style.display = "block";
-
-      console.error(error);
+      alert("Error enviando datos");
 
     }
 
@@ -496,6 +415,22 @@
     button.disabled = false;
 
   });
+
+  function convertirBase64(file){
+
+    return new Promise((resolve, reject) => {
+
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+
+      reader.onload = () => resolve(reader.result);
+
+      reader.onerror = error => reject(error);
+
+    });
+
+  }
 
 </script>
 
